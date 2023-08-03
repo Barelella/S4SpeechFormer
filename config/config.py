@@ -9,7 +9,7 @@ _C.train.device = 'cuda'
 _C.train.num_workers = 8
 
 # Choose the type of the model
-_C.model.type = 'SpeechFormer'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2
+_C.model.type = 'SpeechFormer++'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2
 
 # Total epochs for training
 _C.train.EPOCH = 120
@@ -29,9 +29,9 @@ _C.train.save_best = False
 _C.train.folds = None    # modify in the main process
 
 # Select a database to train a model
-_C.dataset.database = 'iemocap'   # iemocap, meld, pitt, daic_woz
+_C.dataset.database = 'meld'   # iemocap, meld, pitt, daic_woz
 # Select a kind of feature to train a model
-_C.dataset.feature = 'wav2vec'    # spec, wav2vec, logmel, hubert12, hubert24, w2v12, w2v24
+_C.dataset.feature = 'hubert12'    # spec, wav2vec, logmel, hubert12, hubert24, w2v12, w2v24
 # Select a padding mode when preparing data a mini-batch 
 _C.dataset.padmode = 'constant'   # constant, repeat
 

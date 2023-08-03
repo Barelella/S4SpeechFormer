@@ -294,7 +294,7 @@ def main_worker(local_rank, cfg, world_size, dist_url):
     utils.environment.set_seed(cfg.train.seed + local_rank)
     torch.cuda.set_device(local_rank)
     dist.init_process_group(
-        backend='nccl',
+        backend='gloo', #'nccl',
         init_method=dist_url,
         world_size=world_size,
         rank=local_rank,
@@ -342,6 +342,7 @@ def main(cfg):
     mp.spawn(fn=main_worker, args=(cfg, world_size, dist_url), nprocs=world_size)
 
 if __name__=='__main__':
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-mo", "--model.type", help="modify cfg.train.model.type", type=str)
     parser.add_argument("-d", "--dataset.database", help="modify cfg.dataset.database", type=str)

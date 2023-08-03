@@ -3,7 +3,7 @@
 
     "evaluate": ["F1"], 
 
-    "meta_csv_file": "/148Dataset/data-chen.weidong/meld/label/all_label.csv",
+    "meta_csv_file": "../metadata/metadata_meld.csv",
 
     "spec": {
         "feature_dim": 442, 
@@ -41,7 +41,7 @@
     "hubert12": {
         "feature_dim": 1024, 
         "lmdb_root": "/148Dataset/data-chen.weidong/lmdb/meld_hubert_L12",
-        "matdir": "/148Dataset/data-chen.weidong/meld/feature/hubert_large_L12_mat",
+        "matdir": "../metadata/mat_data/hubert_large_L12_mat",
         "matkey": "hubert", 
         "length": 224,
         "pad_value": 0,
@@ -52,7 +52,7 @@
     "hubert24": {
         "feature_dim": 1024, 
         "lmdb_root": "/148Dataset/data-chen.weidong/lmdb/meld_hubert_L24",
-        "matdir": "/148Dataset/data-chen.weidong/meld/feature/hubert_large_L24_mat",
+        "matdir": "../metadata/mat_data/hubert_large_L24_mat",
         "matkey": "hubert", 
         "length": 224,
         "pad_value": 0,
