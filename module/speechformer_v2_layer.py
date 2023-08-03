@@ -27,11 +27,11 @@ class Speech_MSA_v2(nn.Module):
         self.project_out = nn.Linear(embed_dim, embed_dim, bias=bias)
 
         assert embed_dim % num_heads == 0, "embed_dim must be divisible by num_heads"
-        self.head_dim = embed_dim // num_heads
+        self.head_dim = embed_dim // num_heads  # // is floor division
         self.num_heads = num_heads
         self.embed_dim = embed_dim
         self.dropout = dropout
-        self.scaling = float(self.head_dim) ** -0.5
+        self.scaling = float(self.head_dim) ** -0.5 # Hyperparameter
 
     def forward(self, x):
         '''
@@ -54,11 +54,14 @@ class Speech_MSA_v2(nn.Module):
 
         Q, K, V = self.project_qkv(x).chunk(3, dim=-1)
         Q = Q * self.scaling
+        # Reshaping matrices to tensors
         Q = Q.transpose(0, 1).reshape(t, b * self.num_heads, self.head_dim).transpose(0, 1)
         K = K.transpose(0, 1).reshape(t, b * self.num_heads, self.head_dim).transpose(0, 1)
         V = V.transpose(0, 1).reshape(t, b * self.num_heads, self.head_dim).transpose(0, 1)
-
+        
+        # Pass x and z through Q, V, K for layers for each of them
         if not global_attn:
+            # Slice matrix into frames/phonems/words tokens (z) and processed data (x) 
             Q_wtok, Q = Q[:, :self.num_wtok], Q[:, self.num_wtok:]
             K_wtok, K = K[:, :self.num_wtok], K[:, self.num_wtok:]
             V_wtok, V = V[:, :self.num_wtok], V[:, self.num_wtok:]
@@ -108,6 +111,7 @@ class Speech_MSA_v2(nn.Module):
             output_fea = torch.matmul(attn_weights_fea, torch.cat((output_wtok_expa.unsqueeze(dim=2), V), dim=-2)).squeeze(dim=2)
 
             out = torch.cat([output_wtok, output_fea], dim=1)
+        ## Yes global attention
         else:
             attn_weights = torch.matmul(Q, K.transpose(-1, -2))
             attn_weights = F.softmax(attn_weights, dim=-1)

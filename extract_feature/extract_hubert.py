@@ -119,6 +119,11 @@ def handle_meld(model: Hubert):
     save_L12 = '../metadata/mat_data/hubert_large_L12_mat'
     save_L24 = '../metadata/mat_data/hubert_large_L24_mat'
 
+    meld_matroot = '/148Dataset/data-chen.weidong/meld/feature/wav_wav2vec_mat'
+    meld_save_L12 = '/148Dataset/data-chen.weidong/meld/feature/hubert_large_L12_mat'
+    meld_save_L24 = '/148Dataset/data-chen.weidong/meld/feature/hubert_large_L24_mat'
+    meld_wav_dir = '/148Dataset/data-chen.weidong/meld/audio/'
+
     state = ['train', 'dev', 'test']
 
     for s in state:
@@ -135,7 +140,7 @@ def handle_meld(model: Hubert):
         print(f'We have {len(mats)} samples in total.')
         for mat in mats:
 
-            wavfile = f'../metadata/wav_data/{s}/{mat}'
+            wavfile = f'matroot/{s}/{mat}'
             savefile_L12 = f'{save_L12_s}/{mat[:-4]}'#os.path.join(save_L12_s, mat)
             savefile_L24 = f'{save_L24_s}/{mat[:-4]}'#os.path.join(save_L24_s, mat)
 
