@@ -36,7 +36,8 @@ class LMDBReader():
         txn.commit()
 
     def search(self, key: str):
-        buf = self.txn.get(key.encode())
+        # buf = self.txn.get(key.encode())
+        buf = key.encode()
         value = np.copy(np.frombuffer(buf, dtype=self.dtype))
         return value
 
@@ -59,7 +60,8 @@ def get_info(opt, csv_file):
         df_exc = df[df.label == 'exc']
         df_list = [df_sad, df_neu, df_ang, df_hap, df_exc]
         df = pd.concat(df_list)
-        lmdb_path = os.path.join(opt['lmdb_root'], opt['lmdb_name'])
+        # lmdb_path = os.path.join(opt['lmdb_root'], opt['lmdb_name'])
+        lmdb_path = f"{opt['lmdb_root']}/{opt['lmdb_name']}"
     elif opt['database'] == 'meld':
         state = opt['state']
         df = df[df.state == state]
@@ -145,18 +147,21 @@ def folder2lmdb(opt: dict):
     
     if len(key_list) > 0:
         lmdb_reader.insert(key_list, value_list)
-    
-    pickle.dump(meta_info, open(os.path.join(lmdb_path, 'meta_info.pkl'), "wb"))
+
+    if not os.path.exists(f'{lmdb_path}'):
+        os.makedirs(f'{lmdb_path}')
+
+    pickle.dump(meta_info, open(f"{lmdb_path}/meta_info.pkl", "wb"))
     print(f'Finish creating lmdb and meta info -> {lmdb_path}')
 
 if __name__ == '__main__':
     opt = {
         'database': 'meld',
-        'feature': 'hubert12',
-        'lmdb_name': 'daic_woz_wavlm_L24',
+        'feature': 'spec',
+        'lmdb_name': 'meld_spec',
         'lmdb_root': '../lmdb',
         'commit_interval': 100,
-        'state': 'train'   # Valid when database is meld or daic_woz.
+        'state': 'dev'   # Valid when database is meld or daic_woz.
         }
 
     folder2lmdb(opt)

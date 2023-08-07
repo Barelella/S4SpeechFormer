@@ -7,8 +7,8 @@
 
     "spec": {
         "feature_dim": 442, 
-        "lmdb_root": "/148Dataset/data-chen.weidong/lmdb/meld_spec",
-        "matdir": "/148Dataset/data-chen.weidong/meld/feature/wav_spec_20ms_mat",
+        "lmdb_root": "lmdb/meld_spec",
+        "matdir": "../metadata/mat_data",
         "matkey": "spec", 
         "length": 449,
         "pad_value": -80,

@@ -43,8 +43,10 @@ def universal_collater(batch):
 
 class LMDB_Dataset(Dataset):
     def __init__(self, corpus, lmdb_root, map_size, label_conveter, state, mode, length, feature_dim, pad_value, fold=0):
-        lmdb_path = lmdb_root if os.path.exists(os.path.join(lmdb_root, 'meta_info.pkl')) else os.path.join(lmdb_root, state)
-        self.meta_info = pickle.load(open(os.path.join(lmdb_path, 'meta_info.pkl'), "rb"))
+        # lmdb_path = lmdb_root if os.path.exists(os.path.join(lmdb_root, 'meta_info.pkl')) else os.path.join(lmdb_root, state)
+        lmdb_path = lmdb_root if os.path.exists(f"{lmdb_root}/meta_info.pkl") else f"{lmdb_root}/{state}"
+        # self.meta_info = pickle.load(open(os.path.join(lmdb_path, 'meta_info.pkl'), "rb"))
+        self.meta_info = pickle.load(open(f"{lmdb_path}/meta_info.pkl", "rb"))
         self.LMDBReader = utils.lmdb_kit.LMDBReader(lmdb_path, map_size * len(self.meta_info['key']) * 10)
         self.LMDBReader_km = None
         self.corpus = corpus
@@ -145,7 +147,7 @@ class DataloaderFactory():
             collate_fn=identity,
             sampler=sampler, 
             pin_memory=True,
-            multiprocessing_context=mp.get_context('fork'), # quicker! Used with multi-process loading (num_workers > 0)
+            multiprocessing_context=None#mp.get_context('fork'), # quicker! Used with multi-process loading (num_workers > 0)
         )
 
         return DistributedDalaloaderWrapper(dataloader, collate_fn)
