@@ -2,8 +2,8 @@ import os
 import moviepy.editor as mp
 
 
-inputdir = "D:/Oran/study/master/first year/b/deep learning/project/SpeechFormer/metadata/output_repeated_splits_test"
-outputdir = "D:/Oran/study/master/first year/b/deep learning/project/SpeechFormer/metadata/test_wav"
+inputdir = "../MELD.Raw/train/train_splits/"
+outputdir = "../MELD.Raw/train/train_splits_wav/"
 
 for filename in os.listdir(inputdir):
     actual_filename = filename[:-4]
@@ -14,8 +14,8 @@ for filename in os.listdir(inputdir):
             clip = mp.VideoFileClip(f"{inputdir}/{filename}")
             audio = clip.audio
             audio.write_audiofile(f'{outputdir}/{actual_filename}.wav')
-        except:
-            print(f'unable to read {filename}')
+        except Exception as e:
+            print(f'unable to read {filename}, exception: {e}')
             continue
     else:
         continue

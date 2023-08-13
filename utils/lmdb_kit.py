@@ -100,19 +100,19 @@ def folder2lmdb(opt: dict):
     with open(f"../config/{opt['database']}_feature_config.json", 'r') as f:
         data_json = json.load(f)
         csv_file = data_json['meta_csv_file']
-        fea_json = data_json[opt['feature']]
-        matdir = fea_json['matdir']
-        matkey = fea_json['matkey']
+        feature_json = data_json[opt['feature']]
+        matdir = feature_json['matdir']
+        matkey = feature_json['matkey']
   
     df, lmdb_path = get_info(opt, csv_file)
     if not os.path.exists(lmdb_path):
         os.makedirs(lmdb_path)
     else:
-        print(f'Watch out! File path is already existed. ({lmdb_path})')
+        print(f'Watch out! File path already exists. ({lmdb_path})')
         sys.exit()
 
     sample_list = df['name'].values
-    data_size = fea_json['length'] * fea_json['feature_dim'] * 4
+    data_size = feature_json['length'] * feature_json['feature_dim'] * 4
     map_size = data_size * len(sample_list) * 10
 
     lmdb_reader = LMDBReader(lmdb_path, map_size)
@@ -147,7 +147,7 @@ def folder2lmdb(opt: dict):
         lmdb_reader.insert(key_list, value_list)
     
     pickle.dump(meta_info, open(os.path.join(lmdb_path, 'meta_info.pkl'), "wb"))
-    print(f'Finish creating lmdb and meta info -> {lmdb_path}')
+    print(f'Finished creating lmdb and meta info -> {lmdb_path}')
 
 if __name__ == '__main__':
     opt = {
