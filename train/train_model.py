@@ -40,7 +40,7 @@ class Engine():
         ### prepare model and train tools
         model_type = self.cfg.model.type
         model_type = 'SpeechFormer_v2' if model_type == 'SpeechFormer++' else model_type
-        with open('./config/model_config.json', 'r') as f1, open(f'./config/{self.cfg.dataset.database}_feature_config.json', 'r') as f2:
+        with open('../config/model_config.json', 'r') as f1, open(f'../config/{self.cfg.dataset.database}_feature_config.json', 'r') as f2:
             model_json = json.load(f1)[model_type]
             feas_json = json.load(f2)
             data_json = feas_json[self.cfg.dataset.feature]

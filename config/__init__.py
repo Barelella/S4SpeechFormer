@@ -21,9 +21,9 @@ def create_workshop(cfg, local_rank):
             cfg.mark = 'find_init_lr'
         else:
             cfg.mark = 'find_init_lr_' + cfg.mark
-        config_name = f'./exp/{modeltype}/{database}_b{batch}_{feature}'
+        config_name = f'../exp/{modeltype}/{database}_b{batch}_{feature}'
     else:
-        config_name = f'./exp/{modeltype}/{database}_e{epoch}_b{batch}_lr{lr}_{feature}'
+        config_name = f'../exp/{modeltype}/{database}_e{epoch}_b{batch}_lr{lr}_{feature}'
 
     if cfg.mark is not None:
         config_name = config_name + '_{}'.format(cfg.mark)
@@ -57,8 +57,8 @@ def modify_config(cfg, args):
     database = cfg.dataset.database
     feature = cfg.dataset.feature
     
-    train_config = json.load(open(f'./config/train_{modeltype}.json', 'r'))[database][feature]
-    model_config = json.load(open('./config/model_config.json', 'r'))[modeltype]
+    train_config = json.load(open(f'../config/train_{modeltype}.json', 'r'))[database][feature]
+    model_config = json.load(open('../config/model_config.json', 'r'))[modeltype]
 
     # merge from train_config
     train_config = dict_2_list(train_config)
@@ -91,7 +91,7 @@ def modify_config(cfg, args):
         cfg.train.batch_size = ddp_batch_size
 
     # add key: evaluate
-    cfg.train.evaluate = json.load(open(f'./config/{database}_feature_config.json', 'r'))['evaluate']
+    cfg.train.evaluate = json.load(open(f'../config/{database}_feature_config.json', 'r'))['evaluate']
 
 def dict_2_list(dict):
     lst = []
