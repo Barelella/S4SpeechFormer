@@ -36,8 +36,7 @@ class LMDBReader():
         txn.commit()
 
     def search(self, key: str):
-        # buf = self.txn.get(key.encode())
-        buf = key.encode()
+        buf = self.txn.get(key.encode())
         value = np.copy(np.frombuffer(buf, dtype=self.dtype))
         return value
 
@@ -132,7 +131,7 @@ def folder2lmdb(opt: dict):
         if opt['feature'] == 'spec':
             data = librosa.amplitude_to_db(data, ref=np.max)
             data = data.transpose(1,0)
-            
+
         key_list.append(sample)
         value_list.append(data)
 
@@ -161,7 +160,7 @@ if __name__ == '__main__':
         'lmdb_name': 'meld_spec',
         'lmdb_root': '../lmdb',
         'commit_interval': 100,
-        'state': 'dev'   # Valid when database is meld or daic_woz.
+        'state': 'train'   # Valid when database is meld or daic_woz.
         }
 
     folder2lmdb(opt)
