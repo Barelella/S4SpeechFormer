@@ -115,15 +115,16 @@ def handle_iemocap(model: Hubert):
         extract_hubert(model, 24, wavfile, savefile_L24)
 
 def handle_meld(model: Hubert):
-    matroot = '/148Dataset/data-chen.weidong/meld/feature/wav_wav2vec_mat'
-    save_L12 = '/148Dataset/data-chen.weidong/meld/feature/hubert_large_L12_mat'
-    save_L24 = '/148Dataset/data-chen.weidong/meld/feature/hubert_large_L24_mat'
+    matroot = '../metadata/wav_data'
+    save_L12 = '../metadata/mat_data/hubert_large_L12_mat'
+    save_L24 = '../metadata/mat_data/hubert_large_L24_mat'
 
     state = ['train', 'dev', 'test']
+
     for s in state:
-        matroot_s = os.path.join(matroot, s)
-        save_L12_s = os.path.join(save_L12, s)
-        save_L24_s = os.path.join(save_L24, s)
+        matroot_s = f'{matroot}/{s}'#os.path.join(matroot, s)
+        save_L12_s = f'{save_L12}/{s}'#os.path.join(save_L12, s)
+        save_L24_s = f'{save_L24}/{s}'#os.path.join(save_L24, s)
 
         if not os.path.exists(save_L12_s):
             os.makedirs(save_L12_s)
@@ -133,11 +134,17 @@ def handle_meld(model: Hubert):
         mats = os.listdir(matroot_s)
         print(f'We have {len(mats)} samples in total.')
         for mat in mats:
-            wavfile = f'/148Dataset/data-chen.weidong/meld/audio/{s}/{mat}.wav'
-            savefile_L12 = os.path.join(save_L12_s, mat)
-            savefile_L24 = os.path.join(save_L24_s, mat)
-            extract_hubert(model, 12, wavfile, savefile_L12)
-            extract_hubert(model, 24, wavfile, savefile_L24)
+
+            wavfile = f'../metadata/wav_data/{s}/{mat}'
+            savefile_L12 = f'{save_L12_s}/{mat[:-4]}'#os.path.join(save_L12_s, mat)
+            savefile_L24 = f'{save_L24_s}/{mat[:-4]}'#os.path.join(save_L24_s, mat)
+
+            if os.path.exists(savefile_L12):
+                print(f'file skipped: {mat}')
+
+            else:
+                extract_hubert(model, 12, wavfile, savefile_L12)
+                extract_hubert(model, 24, wavfile, savefile_L24)
 
 def handle_pitt(model: Hubert):
     matroot = '/148Dataset/data-chen.weidong/DementiaBank/Pitt/feature/wav_wav2vec_mat'
@@ -183,16 +190,26 @@ def handle_daic(model: Hubert):
         extract_hubert(model, 12, wavfile, savefile_L12)
         extract_hubert(model, 24, wavfile, savefile_L24)
 
+
+# def force_cudnn_initialization():
+#     s = 32
+#     dev = torch.device('cuda')
+#     torch.nn.functional.conv2d(torch.zeros(s, s, s, s, device=dev), torch.zeros(s, s, s, s, device=dev))
+
+
 if __name__ == '__main__':
+    # force_cudnn_initialization()
+    # torch.cuda.empty_cache()
+
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
     get_receptive_field(k=[10, 3, 3, 3, 3, 2, 2], s=[5, 2, 2, 2, 2, 2, 2])
     
-    ckpt_path = "/148Dataset/data-chen.weidong/pre_trained_model/hubert/hubert_large_ll60k.pt"  # hubert_large_ll60k, hubert_base_ls960
+    ckpt_path = "../pre_trained_model/hubert/hubert_large_ll60k.pt"  # hubert_large_ll60k, hubert_base_ls960
     model = Hubert(ckpt_path)
 
     # handle_iemocap(model)
-    # handle_meld(model)
+    handle_meld(model)
     # handle_pitt(model)
     # handle_daic(model)
     

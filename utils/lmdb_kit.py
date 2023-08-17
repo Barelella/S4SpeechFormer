@@ -59,11 +59,13 @@ def get_info(opt, csv_file):
         df_exc = df[df.label == 'exc']
         df_list = [df_sad, df_neu, df_ang, df_hap, df_exc]
         df = pd.concat(df_list)
-        lmdb_path = os.path.join(opt['lmdb_root'], opt['lmdb_name'])
+        # lmdb_path = os.path.join(opt['lmdb_root'], opt['lmdb_name'])
+        lmdb_path = f"{opt['lmdb_root']}/{opt['lmdb_name']}"
     elif opt['database'] == 'meld':
         state = opt['state']
         df = df[df.state == state]
-        lmdb_path = os.path.join(opt['lmdb_root'], opt['lmdb_name'], state)
+        # lmdb_path = os.path.join(opt['lmdb_root'], opt['lmdb_name'], state)
+        lmdb_path = f"{opt['lmdb_root']}/{opt['lmdb_name']}/{state}"
     elif opt['database'] == 'pitt':
         df = df[df.valid == True]
         lmdb_path = os.path.join(opt['lmdb_root'], opt['lmdb_name'])
@@ -83,7 +85,8 @@ def modify_matdir_sample(opt, matdir, label=None, sample=None):
     if opt['database'] == 'iemocap':
         matdir = matdir
     elif opt['database'] == 'meld':
-        matdir = os.path.join(matdir, opt['state'])
+        # matdir = os.path.join(matdir, opt['state'])
+        matdir = f"{matdir}/{opt['state']}"
     elif opt['database'] == 'pitt':
         matdir = os.path.join(matdir, label, 'cookie')
     elif opt['database'] == 'daic_woz':
@@ -95,7 +98,7 @@ def modify_matdir_sample(opt, matdir, label=None, sample=None):
     return matdir, sample
 
 def folder2lmdb(opt: dict):
-    with open(f"./config/{opt['database']}_feature_config.json", 'r') as f:
+    with open(f"../config/{opt['database']}_feature_config.json", 'r') as f:
         data_json = json.load(f)
         csv_file = data_json['meta_csv_file']
         fea_json = data_json[opt['feature']]
@@ -122,12 +125,13 @@ def folder2lmdb(opt: dict):
         label = df_sample.iloc[0, :]["label"]
 
         _matdir, sample = modify_matdir_sample(opt, matdir, label, sample)
-        data = io.loadmat(os.path.join(_matdir, sample))[matkey]
+        # data = io.loadmat(os.path.join(_matdir, sample))[matkey]
+        data = io.loadmat(f'{_matdir}/{sample}')[matkey]
 
         if opt['feature'] == 'spec':
             data = librosa.amplitude_to_db(data, ref=np.max)
             data = data.transpose(1,0)
-            
+
         key_list.append(sample)
         value_list.append(data)
 
@@ -142,16 +146,19 @@ def folder2lmdb(opt: dict):
     
     if len(key_list) > 0:
         lmdb_reader.insert(key_list, value_list)
-    
-    pickle.dump(meta_info, open(os.path.join(lmdb_path, 'meta_info.pkl'), "wb"))
+
+    if not os.path.exists(f'{lmdb_path}'):
+        os.makedirs(f'{lmdb_path}')
+
+    pickle.dump(meta_info, open(f"{lmdb_path}/meta_info.pkl", "wb"))
     print(f'Finish creating lmdb and meta info -> {lmdb_path}')
 
 if __name__ == '__main__':
     opt = {
-        'database': 'daic_woz',
-        'feature': 'wavlm24',
-        'lmdb_name': 'daic_woz_wavlm_L24',
-        'lmdb_root': '/148Dataset/data-chen.weidong/lmdb',
+        'database': 'meld',
+        'feature': 'spec',
+        'lmdb_name': 'meld_spec',
+        'lmdb_root': '../lmdb',
         'commit_interval': 100,
         'state': 'train'   # Valid when database is meld or daic_woz.
         }
