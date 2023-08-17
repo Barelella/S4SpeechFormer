@@ -1,5 +1,4 @@
-
-import fairseq
+from transformers import HubertModel
 import soundfile as sf
 import scipy.signal as signal
 from scipy import io
@@ -7,6 +6,8 @@ import torch
 import torch.nn.functional as F
 import os
 import numpy as np
+
+## packages for pretrained hubert
 
 def get_receptive_field(k: list, s: list):
     k.reverse()
@@ -24,10 +25,13 @@ def get_receptive_field(k: list, s: list):
     print('receptive field is:', recept_1, 'points (/sr -> second)')
     print('hop is:', recept_2 - recept_1, 'points (/sr -> second)')
 
+    
 class Hubert(object):
     def __init__(self, ckpt_path, max_chunk=1600000, wav_length=104640):
-        model, cfg, task = fairseq.checkpoint_utils.load_model_ensemble_and_task([ckpt_path])
-        self.model = model[0].eval().cuda()
+        # fairseq outputs a "model ensemble" - a list of models really
+        # model, cfg, task = fairseq.checkpoint_utils.load_model_ensemble_and_task([ckpt_path])
+        # Then they take the first one
+        self.model = HubertModel.from_pretrained("facebook/hubert-large-ls960-ft").eval().cuda()
         self.task = task
         self.max_chunk = max_chunk
         self.wav_length = wav_length  # (326 + 1) * 0.02 * 16000 = 104640
@@ -35,10 +39,10 @@ class Hubert(object):
     def read_audio(self, path):
         wav, sr = sf.read(path)
         
-        if sr != self.task.cfg.sample_rate:
-            num = int((wav.shape[0]) / sr * self.task.cfg.sample_rate)
-            wav = signal.resample(wav, num)
-            print(f'Resample {sr} to {self.task.cfg.sample_rate}')
+        # if sr != self.task.cfg.sample_rate:
+        #     num = int((wav.shape[0]) / sr * self.task.cfg.sample_rate)
+        #     wav = signal.resample(wav, num)
+        #     print(f'Resample {sr} to {self.task.cfg.sample_rate}')
         
         if wav.ndim == 2:
             wav = wav.mean(-1)
@@ -56,7 +60,7 @@ class Hubert(object):
         x = np.stack(x, axis=0)
         return x
 
-    def get_feats(self, path, layer):
+    def get_features(self, path, layer: int):
         '''Layer index starts from 1. (e.g. 1-24)
         '''
         if isinstance(path, str):
@@ -83,15 +87,23 @@ class Hubert(object):
             feat.append(feat_chunk)
         return torch.cat(feat, 1)
 
-def extract_hubert(model: Hubert, layer, wavfile, savefile):
-    with torch.no_grad():
-        fea = model.get_feats(wavfile, layer=layer).squeeze(0)
+def extract_hubert(model: Hubert, layer: int, wavfile: str, savefile: str):
+    """ This function exctracts features based on HuBERT model 
 
-    fea = fea.cpu().detach().numpy()   # (t, 768)  / (t, 1024)
-    dict = {'hubert': fea}
+    Args:
+        model (Hubert): model in class Hubert
+        layer (int): layer - choice between 12 and 24
+        wavfile (_type_): _description_
+        savefile (_type_): _description_
+    """
+    with torch.no_grad():
+        features = model.get_features(wavfile, layer=layer).squeeze(0)
+
+    features = features.cpu().detach().numpy()   # (t, 768)  / (t, 1024)
+    dict = {'hubert': features}
     io.savemat(savefile, dict)
     
-    print(savefile, '->', fea.shape)
+    print(f'{savefile} -> {features.shape}')
 
 def handle_iemocap(model: Hubert):
     matroot = '/148Dataset/data-chen.weidong/iemocap/feature/wav_wav2vec_mat'
@@ -115,36 +127,40 @@ def handle_iemocap(model: Hubert):
         extract_hubert(model, 24, wavfile, savefile_L24)
 
 def handle_meld(model: Hubert):
-    matroot = '../metadata/wav_data'
-    save_L12 = '../metadata/mat_data/hubert_large_L12_mat'
-    save_L24 = '../metadata/mat_data/hubert_large_L24_mat'
+    wav_root = '../metadata/wav_data'
+    save_L12 = '../metadata/mat_data/meld/hubert_large_L12_mat'
+    save_L24 = '../metadata/mat_data/meld/hubert_large_L24_mat'
 
-    state = ['train', 'dev', 'test']
+    state = ['train'
+             , 'dev'
+             # , 'test'
+             ]
 
-    for s in state:
-        matroot_s = f'{matroot}/{s}'#os.path.join(matroot, s)
-        save_L12_s = f'{save_L12}/{s}'#os.path.join(save_L12, s)
-        save_L24_s = f'{save_L24}/{s}'#os.path.join(save_L24, s)
+    for state in state:
+        wav_root_str = f'{wav_root}/{state}'#os.path.join(matroot, s)
+        save_L12_s = f'{save_L12}/{state}'#os.path.join(save_L12, s)
+        save_L24_s = f'{save_L24}/{state}'#os.path.join(save_L24, s)
 
         if not os.path.exists(save_L12_s):
             os.makedirs(save_L12_s)
         if not os.path.exists(save_L24_s):
             os.makedirs(save_L24_s)
 
-        mats = os.listdir(matroot_s)
-        print(f'We have {len(mats)} samples in total.')
-        for mat in mats:
+        samples = os.listdir(wav_root_str)
+        print(f'We have {len(samples)} samples in total.')
+        for sample in samples:
 
-            wavfile = f'../metadata/wav_data/{s}/{mat}'
-            savefile_L12 = f'{save_L12_s}/{mat[:-4]}'#os.path.join(save_L12_s, mat)
-            savefile_L24 = f'{save_L24_s}/{mat[:-4]}'#os.path.join(save_L24_s, mat)
+            wavfile = f'matroot/{state}/{sample}'
+            # [:-4] removes the suffix .wav
+            outputfile_L12 = f'{save_L12_s}/{sample[:-4]}'#os.path.join(save_L12_s, mat)
+            outputfile_L24 = f'{save_L24_s}/{sample[:-4]}'#os.path.join(save_L24_s, mat)
 
-            if os.path.exists(savefile_L12):
-                print(f'file skipped: {mat}')
+            if os.path.exists(outputfile_L12):
+                print(f'file skipped: {sample}')
 
             else:
-                extract_hubert(model, 12, wavfile, savefile_L12)
-                extract_hubert(model, 24, wavfile, savefile_L24)
+                extract_hubert(model, 12, wavfile, outputfile_L12)
+                extract_hubert(model, 24, wavfile, outputfile_L24)
 
 def handle_pitt(model: Hubert):
     matroot = '/148Dataset/data-chen.weidong/DementiaBank/Pitt/feature/wav_wav2vec_mat'

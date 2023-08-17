@@ -28,6 +28,7 @@ if __name__ == '__main__':
     #### use extract_spec
     # wavfile = xxx
     # savefile = xxx
+
     # extract_spec(wav_file, savefile, nfft, hop)
 
     state = ['train', 'dev', 'test']

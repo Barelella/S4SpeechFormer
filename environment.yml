@@ -1,0 +1,17 @@
+name: speechformer_env
+channels:
+  - anaconda
+  - conda-forge
+dependencies:
+  - python >= 3.8
+  - librosa==0.8.1
+  - matplotlib
+  - numpy
+  - pandas
+  - scikit-learn
+  - scipy
+  - pysoundfile==0.10.3.post1
+  - pytorch
+  - tqdm
+  - yacs
+  - transformers
