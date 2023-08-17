@@ -28,7 +28,8 @@ def create_workshop(cfg, local_rank):
     if cfg.mark is not None:
         config_name = config_name + '_{}'.format(cfg.mark)
 
-    cfg.workshop = os.path.join(config_name, f'fold_{cfg.train.current_fold}')
+    # cfg.workshop = os.path.join(config_name, f'fold_{cfg.train.current_fold}')
+    cfg.workshop = f"{config_name}/fold_{cfg.train.current_fold}"
     cfg.ckpt_save_path = os.path.join(cfg.workshop, 'checkpoint')
     
     if local_rank == 0:

@@ -159,7 +159,7 @@ if __name__ == '__main__':
     model = Wav2vec2(ckpt_path)
 
     # handle_iemocap(model)
-    # handle_meld(model)
+    handle_meld(model)
     # handle_pitt(model)
     # handle_daic(model)
     
