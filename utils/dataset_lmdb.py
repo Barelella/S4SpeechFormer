@@ -46,8 +46,8 @@ class LMDB_Dataset(Dataset):
         # lmdb_path = lmdb_root if os.path.exists(os.path.join(lmdb_root, 'meta_info.pkl')) else os.path.join(lmdb_root, state)
         lmdb_path = lmdb_root if os.path.exists(f"{lmdb_root}/meta_info.pkl") else f"{lmdb_root}/{state}"
         # self.meta_info = pickle.load(open(os.path.join(lmdb_path, 'meta_info.pkl'), "rb"))
-        self.meta_info = pickle.load(open(f"{lmdb_path}/meta_info.pkl", "rb"))
-        self.LMDBReader = utils.lmdb_kit.LMDBReader(lmdb_path, map_size * len(self.meta_info['key']) * 10)
+        self.meta_info = pickle.load(open(f"../{lmdb_path}/meta_info.pkl", "rb"))
+        self.LMDBReader = utils.lmdb_kit.LMDBReader(f'../{lmdb_path}', map_size * len(self.meta_info['key']) * 10)
         self.LMDBReader_km = None
         self.corpus = corpus
 
