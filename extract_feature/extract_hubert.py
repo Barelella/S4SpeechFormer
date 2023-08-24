@@ -1,5 +1,5 @@
-from transformers import HubertModel
-import soundfile as sf
+import fairseq
+# import soundfile as sf
 import scipy.signal as signal
 from scipy import io
 import torch
@@ -29,9 +29,9 @@ def get_receptive_field(k: list, s: list):
 class Hubert(object):
     def __init__(self, ckpt_path, max_chunk=1600000, wav_length=104640):
         # fairseq outputs a "model ensemble" - a list of models really
-        # model, cfg, task = fairseq.checkpoint_utils.load_model_ensemble_and_task([ckpt_path])
+        model, cfg, task = fairseq.checkpoint_utils.load_model_ensemble_and_task([ckpt_path])
         # Then they take the first one
-        self.model = HubertModel.from_pretrained("facebook/hubert-large-ls960-ft").eval().cuda()
+        self.model = model[0].eval().cuda()
         self.task = task
         self.max_chunk = max_chunk
         self.wav_length = wav_length  # (326 + 1) * 0.02 * 16000 = 104640
@@ -39,10 +39,10 @@ class Hubert(object):
     def read_audio(self, path):
         wav, sr = sf.read(path)
         
-        # if sr != self.task.cfg.sample_rate:
-        #     num = int((wav.shape[0]) / sr * self.task.cfg.sample_rate)
-        #     wav = signal.resample(wav, num)
-        #     print(f'Resample {sr} to {self.task.cfg.sample_rate}')
+        if sr != self.task.cfg.sample_rate:
+            num = int((wav.shape[0]) / sr * self.task.cfg.sample_rate)
+            wav = signal.resample(wav, num)
+            print(f'Resample {sr} to {self.task.cfg.sample_rate}')
         
         if wav.ndim == 2:
             wav = wav.mean(-1)
