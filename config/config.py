@@ -18,7 +18,7 @@ _C.train.batch_size = 32
 # Initial learning rate
 _C.train.lr = 0.0005
 # Set a random seed for reproducition
-_C.train.seed = 123
+_C.train.seed = 321#123
 # Select the GPUs used
 _C.train.device_id = '0'
 # Whether to find a appropriate initial learning rate automatically
