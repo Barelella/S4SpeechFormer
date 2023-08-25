@@ -2,6 +2,8 @@ import os
 import numpy as np
 from datasets import load_dataset
 
+## Problem 1: we don't know the difference between wavelength in huggingface hubert and between data wavelength.
+## Problem 2: use MELD dataset from datasets library 
 def extract_huggingface_hubert(layer, wav_file, output_file):
 
 
@@ -42,5 +44,4 @@ def handle_meld():
 
 if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-
     handle_meld()
