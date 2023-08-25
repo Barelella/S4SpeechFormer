@@ -9,7 +9,8 @@ _C.train.device = 'cuda'
 _C.train.num_workers = 0
 
 # Choose the type of the model
-_C.model.type = 'SpeechFormer++'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2
+# _C.model.type = 'SpeechFormer++'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2 / S4_SpeechFormer
+_C.model.type = 'S4_SpeechFormer'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2 / S4_SpeechFormer
 
 # Total epochs for training
 _C.train.EPOCH = 120

@@ -23,7 +23,7 @@ class MergeBlock(nn.Module):
         self.pool = nn.AdaptiveAvgPool2d((1, in_channels))
         self.fc = nn.Linear(in_channels, out_channels)
         self.norm = nn.LayerNorm(out_channels)
-        
+
     def forward(self, x:torch.Tensor):
         x_wtok, x_fea = x[:, :self.num_wtok], x[:, self.num_wtok:]
 
@@ -70,7 +70,7 @@ class s4_SpeechFormer_Blocks(nn.Module):
 
         return output
 
-class SpeechFormer_v2(nn.Module):
+class S4_SpeechFormer(nn.Module):
     def __init__(self, input_dim, ffn_embed_dim, num_layers, num_heads, hop, num_classes, 
             expand, dropout=0.1, attention_dropout=0.1, **kwargs):
         super().__init__()
