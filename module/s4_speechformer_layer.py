@@ -65,6 +65,7 @@ class S4DKernel(nn.Module):
             setattr(getattr(self, name), "_optim", optim)
 
 
+
 class S4D(nn.Module):
     def __init__(self, d_model, d_state=64, dropout=0.0, transposed=True, **kernel_args):
         super().__init__()
