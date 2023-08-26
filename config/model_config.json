@@ -21,5 +21,14 @@
         "num_heads": 8,
         "dropout": 0.1, 
         "attention_dropout": 0.1
+    },
+
+    "S4_SpeechFormer": {
+        "num_layers": [2, 2, 4, 4],
+        "expand": [1, 1, 1],
+        "num_heads": 8,
+        "dropout": 0.1,
+        "attention_dropout": 0.1
     }
+
 }
