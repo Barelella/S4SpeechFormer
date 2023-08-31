@@ -70,12 +70,12 @@ class S4D(nn.Module):
     def __init__(self, d_model, d_state=64, dropout=0.0, transposed=True, **kernel_args):
         super().__init__()
 
-        self.h = d_model
-        self.n = d_state
-        self.d_output = self.h
+        self.h = d_model # feature_dim
+        self.n = d_state # 64
+        self.d_output = self.h # feature_dim
         self.transposed = transposed
 
-        self.D = nn.Parameter(torch.randn(self.h))
+        self.D = nn.Parameter(torch.randn(self.h)) # feature_dim
 
         # SSM Kernel
         self.kernel = S4DKernel(self.h, N=self.n, **kernel_args)

@@ -68,8 +68,7 @@ class SpeechFormer_v2_Blocks(nn.Module):
         for layer in self.layers:
             output = layer(output, self.position, kmeans_mask)
 
-        return output+
-    
+        return output
 
 class SpeechFormer_v2(nn.Module):
     def __init__(self, input_dim, ffn_embed_dim, num_layers, num_heads, hop, num_classes, 
