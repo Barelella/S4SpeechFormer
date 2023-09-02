@@ -111,7 +111,7 @@ class S4D(nn.Module):
         y = self.dropout(self.activation(y))
         y = self.output_linear(y)
         if not self.transposed: y = y.transpose(-1, -2)
-        return y, None # Return a dummy state to satisfy this repo's interface, but this can be modified
+        return y # Returned a dummy state (None) to satisfy this repo's interface, modified for use of speechformer
 
 
 
@@ -136,7 +136,7 @@ class s4_SpeechFormer_Encoder(nn.Module):
         self.activation_fn = _get_activation_fn(activation)
 
         # self.attention = Speech_MSA_v2(embed_dim, num_heads, local_size, attention_dropout, num_wtok=num_wtok)
-        self.attention = S4D(embed_dim)#, num_heads, local_size, attention_dropout, num_wtok=num_wtok)
+        self.attention = S4D(embed_dim, transposed=False)#, num_heads, local_size, attention_dropout, num_wtok=num_wtok)
 
         self.attention_layer_norm = nn.LayerNorm(embed_dim)
         

@@ -84,8 +84,6 @@ class S4_SpeechFormer(nn.Module):
         self.wtok = nn.Parameter(torch.empty(1, self.num_wtok, input_dim), requires_grad=True)
         _no_grad_trunc_normal_(self.wtok, std=0.02)
 
-        if (self.num_wtok > 0):
-            self.input_dim = self.input_dim + self.wtok.shape[1]
         Former_args = {'num_layers': None, 'embed_dim': self.input_dim, 'ffn_embed_dim': ffn_embed_dim, 'local_size': None, 
             'num_heads': num_heads, 'dropout': dropout, 'attention_dropout': attention_dropout, 'activation': 'relu', 'use_position': True, 'num_wtok': self.num_wtok}
         Merge_args = {'in_channels': self.input_dim, 'merge_scale': None, 'expand': None, 'num_wtok': self.num_wtok}
@@ -106,7 +104,7 @@ class S4_SpeechFormer(nn.Module):
         )
 
     def forward(self, x):
-        if self.input_dim != x.shape[-1]:
+        if self.input_dim != x.shape[-1]: # x dimensions: num_sampels, length, feature_dim
             x = x[:, :, :self.input_dim]
 
         wtok = self.wtok.expand(x.shape[0], -1, -1)
