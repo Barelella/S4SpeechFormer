@@ -91,7 +91,7 @@ def path_to_csv(filepath='./exp', criterion=['accuracy', 'precision', 'recall', 
         df = pd.read_csv(csvfile)
         df_temp = df[df['Model'] == new_df.loc[0, 'Model']]
         if df_temp.empty:
-            df = df.append(new_df, ignore_index=True)   # insert a new line in DataFrame 
+            df = pd.concat([df, new_df], ignore_index=True)   # insert a new line in DataFrame 
         else:
             row_index = df_temp.index.tolist()[0]
             for c in criterion:

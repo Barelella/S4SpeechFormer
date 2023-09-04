@@ -9,7 +9,8 @@ _C.train.device = 'cuda'
 _C.train.num_workers = 0
 
 # Choose the type of the model
-_C.model.type = 'SpeechFormer++'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2
+# _C.model.type = 'SpeechFormer++'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2 / S4_SpeechFormer
+_C.model.type = 'S4_SpeechFormer'   # Transformer, SpeechFormer, SpeechFormer++/SpeechFormer_v2 / S4_SpeechFormer
 
 # Total epochs for training
 _C.train.EPOCH = 120
@@ -18,7 +19,7 @@ _C.train.batch_size = 32
 # Initial learning rate
 _C.train.lr = 0.0005
 # Set a random seed for reproducition
-_C.train.seed = 123
+_C.train.seed = 321#123
 # Select the GPUs used
 _C.train.device_id = '0'
 # Whether to find a appropriate initial learning rate automatically

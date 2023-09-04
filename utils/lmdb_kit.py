@@ -120,6 +120,7 @@ def folder2lmdb(opt: dict):
     
     key_list, value_list = [], []
     meta_info = {'shape': [], 'key': [], 'label': []}
+    print(f"Num of samples for lmdb: {len(sample_list)}")
     for idx, sample in tqdm(enumerate(sample_list), total=len(sample_list)):
         df_sample = df[df['name'] == sample]
         label = df_sample.iloc[0, :]["label"]
@@ -154,13 +155,14 @@ def folder2lmdb(opt: dict):
     print(f'Finish creating lmdb and meta info -> {lmdb_path}')
 
 if __name__ == '__main__':
-    opt = {
-        'database': 'meld',
-        'feature': 'spec',
-        'lmdb_name': 'meld_spec',
-        'lmdb_root': '../lmdb',
-        'commit_interval': 100,
-        'state': 'train'   # Valid when database is meld or daic_woz.
-        }
+    for item in ['train', 'dev', 'test']:
+        opt = {
+            'database': 'meld',
+            'feature': 'spec',
+            'lmdb_name': 'meld_spec',
+            'lmdb_root': '../lmdb',
+            'commit_interval': 100,
+            'state': item   # Valid when database is meld or daic_woz.
+            }
 
-    folder2lmdb(opt)
+        folder2lmdb(opt)

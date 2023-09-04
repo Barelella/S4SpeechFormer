@@ -16,6 +16,9 @@ def load_model(model_type, device='cpu', **kwargs):
     elif model_type == 'SpeechFormer++' or model_type == 'SpeechFormer_v2':
         from model.speechformer_v2 import SpeechFormer_v2
         model = SpeechFormer_v2(**kwargs)
+    elif model_type == 'S4_SpeechFormer':
+        from model.s4_speechformer import S4_SpeechFormer
+        model = S4_SpeechFormer(**kwargs)
     else:
         raise KeyError(f'Unknown model type: {model_type}')
 
