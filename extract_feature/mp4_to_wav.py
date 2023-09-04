@@ -2,8 +2,8 @@ import os
 import moviepy.editor as mp
 
 
-inputdir = "../MELD.Raw/train/train_splits/"
-outputdir = "../MELD.Raw/train/train_splits_wav/"
+inputdir = "../MELD.Raw/test/output_repeated_splits_test/"
+outputdir = "../MELD.Raw/test/output_repeated_splits_test_wav/"
 
 for filename in os.listdir(inputdir):
     actual_filename = filename[:-4]
