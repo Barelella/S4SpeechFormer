@@ -15,7 +15,8 @@ from torch.utils.tensorboard import SummaryWriter
 from collections import OrderedDict
 import json
 import argparse
-
+import sys
+sys.path.append("../")
 import utils
 from config import Cfg, create_workshop, modify_config
 
